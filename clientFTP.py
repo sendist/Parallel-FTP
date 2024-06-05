@@ -3,7 +3,7 @@ import time
 
 print('Creating socket...')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('192.168.0.113', 12345)  # Menggunakan alamat IP server yang benar
+server_address = ('192.168.168.168', 12345)  # Menggunakan alamat IP server yang benar
 
 print('Connecting to {} port {}'.format(*server_address))
 try:
@@ -31,20 +31,20 @@ try:
         time.sleep(0.1)
 
         if cmd == 'RETR':
-            response = client_socket.recv(1024)
-            if response.startswith(b"Error"):
-                print(response.decode())
-            else:
-                filename = command.split(' ', 1)[1]
-                with open(filename, 'wb') as f:
-                    while True:
-                        data = client_socket.recv(1024)
-                        if data.endswith(b'EOF'):
-                            f.write(data[:-3])
-                            print("File downloaded successfully.")
-                            break
-                        else:
-                            f.write(data)
+            filename = command.split(' ', 1)[1]
+            total_data = b""
+            while True:
+                data = client_socket.recv(1024)
+                if b'EOF' in data:
+                    total_data += data[:data.index(b'EOF')]
+                    confirmation = data[data.index(b'EOF')+3:]
+                    break
+                else:
+                    total_data += data
+            with open(filename, 'wb') as f:
+                f.write(total_data)
+            print(confirmation.decode().strip())  # Tampilkan pesan konfirmasi
+            print("File downloaded successfully.")
 
         elif cmd == 'STOR':
             try:
@@ -53,12 +53,14 @@ try:
                 client_socket.sendall(len(data).to_bytes(4, 'big'))
                 client_socket.sendall(data)
                 client_socket.sendall(b'EOF')
-                print("File uploaded successfully.")
+                confirmation = client_socket.recv(1024)  # Tunggu konfirmasi
+                print(confirmation.decode().strip())  # Tampilkan pesan konfirmasi
             except FileNotFoundError:
                 print("Error: File not found.")
 
         elif cmd == 'LIST' or cmd == 'CWD':
-            print(client_socket.recv(1024).decode())
+            response = client_socket.recv(1024).decode()
+            print(response)
 
         elif cmd == 'ACTIVE':
             active_clients = client_socket.recv(1024).decode()
@@ -66,5 +68,8 @@ try:
 
 finally:
     print('Closing socket')
-    client_socket.sendall(b'DISCONNECTED')  # Mengirimkan pesan koneksi ke server
+    try:
+        client_socket.sendall(b'DISCONNECTED')  # Mengirimkan pesan koneksi ke server
+    except ConnectionResetError:
+        pass
     client_socket.close()
