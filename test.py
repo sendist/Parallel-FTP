@@ -1,1 +1,1 @@
-File transfer completed.
+Welcome to the FTP server.File transfer completed.
