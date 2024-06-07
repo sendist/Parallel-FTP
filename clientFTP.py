@@ -3,7 +3,7 @@ import time
 
 print('Creating socket...')
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = ('192.168.168.168', 12345)  # Menggunakan alamat IP server yang benar
+server_address = ('192.168.0.114', 12345)  # Menggunakan alamat IP server yang benar
 
 print('Connecting to {} port {}'.format(*server_address))
 try:
