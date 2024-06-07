@@ -17,9 +17,9 @@ except Exception as e:
 
 try:
     while True:
-        command = input("Enter command (LIST, RETR <filename>, STOR <filename>, CWD <directory>, QUIT, ACTIVE): ")
+        command = input("Enter command (LIST, RETR <filename>, STOR <filename>, CWD <directory>, QUIT): ")
         cmd = command.split(' ', 1)[0].upper()
-        if cmd not in ['LIST', 'RETR', 'STOR', 'CWD', 'QUIT', 'ACTIVE']:
+        if cmd not in ['LIST', 'RETR', 'STOR', 'CWD', 'QUIT']:
             print("Error: command not valid")
             continue
 
@@ -61,10 +61,6 @@ try:
         elif cmd == 'LIST' or cmd == 'CWD':
             response = client_socket.recv(1024).decode()
             print(response)
-
-        elif cmd == 'ACTIVE':
-            active_clients = client_socket.recv(1024).decode()
-            print("Active clients: ", active_clients)
 
 finally:
     print('Closing socket')
