@@ -44,8 +44,7 @@ class ClientThread(threading.Thread):
                     self.change_dir(arg)
                 elif cmd == 'QUIT':
                     self.is_connected = False
-                elif cmd == 'ACTIVE':
-                    self.active_clients()
+                    
         except ConnectionResetError:
             print(f"Connection reset by client {self.client_address}")
         finally:
@@ -150,7 +149,7 @@ class ClientThread(threading.Thread):
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-server_address = ('192.168.168.168', 12345)
+server_address = ('192.168.0.114', 12345)
 print('Starting up on {} port {}'.format(*server_address))
 server_socket.bind(server_address)
 print('Binding successful, now listening...')
