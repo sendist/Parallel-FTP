@@ -19,10 +19,11 @@ except Exception as e:  # Menangkap pengecualian jika koneksi gagal
 
 try:
     while True:
-        command = input("Enter command (LIST, RETR <filename>, STOR <filename>, CWD <directory>, QUIT): ")
-        cmd = command.split(' ', 1)[0].upper()
-        if cmd not in ['LIST', 'RETR', 'STOR', 'CWD', 'QUIT']:
-            print("Error: command not valid")
+        # Menerima perintah dari pengguna
+        command = input("Enter command (LIST, RETR <filename>, STOR <filename>, CWD <directory>, QUIT, ACTIVE): ")
+        cmd = command.split(' ', 1)[0].upper()  # Mendapatkan perintah utama
+        if cmd not in ['LIST', 'RETR', 'STOR', 'CWD', 'QUIT', 'ACTIVE']:
+            print("Error: command not valid")  # Validasi perintah
             continue
 
         if cmd == 'QUIT':
@@ -63,6 +64,10 @@ try:
         elif cmd == 'LIST' or cmd == 'CWD':  # Jika perintah adalah LIST atau CWD
             response = client_socket.recv(1024).decode()  # Menerima dan decode respons dari server
             print(response)  # Tampilkan respons
+
+        elif cmd == 'ACTIVE':  # Jika perintah adalah ACTIVE
+            active_clients = client_socket.recv(1024).decode()  # Menerima dan decode daftar klien aktif
+            print("Active clients: ", active_clients)  # Tampilkan daftar klien aktif
 
 finally:
     print('Closing socket')

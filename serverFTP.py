@@ -44,7 +44,8 @@ class ClientThread(threading.Thread):
                     self.change_dir(arg)
                 elif cmd == 'QUIT':
                     self.is_connected = False
-                    
+                elif cmd == 'ACTIVE':
+                    self.active_clients()
         except ConnectionResetError:
             print(f"Connection reset by client {self.client_address}")
         finally:
